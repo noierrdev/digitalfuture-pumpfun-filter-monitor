@@ -150,6 +150,43 @@ function filterAlert(message){
     });
 }
 
+
+function devSoldAlert(message){
+    if(!pumpfunTokens[message.mint]) return;
+    // if(pumpfunTokens[message.mint][`percent_${percent}`]) return;
+    const currentTime=new Date();
+    // pumpfunTokens[message.mint][`percent_${percent}`]=currentTime.getTime();
+    bot.api.sendMessage("@pumpfun_strategy_channel",`
+<b>💊 Dev sold hold tokens! 💊</b>
+
+<b>Name : ${pumpfunTokens[message.mint].name}</b>
+<b>Symbol : ${pumpfunTokens[message.mint].symbol}</b>
+
+
+<b>Mint : </b>
+<code>${message.mint}</code>
+
+
+<b>BondingCurve : </b>
+<code>${message.bondingCurveKey}</code>
+
+
+<b>Market Cap in SOL : </b>${message.marketCapSol} SOL
+<b>Market Cap in USD : </b>${((message.marketCapSol*solPrice)/1000).toFixed(2)} K$
+<b>vSOL in bonding curve : </b>${message.vSolInBondingCurve} SOL
+<b>Number of Buy Trades : </b>${pumpfunTokens[message.mint].numberOfBuyTrades}
+<b>Number of Sell Trades : </b>${pumpfunTokens[message.mint].numberOfSellTrades}
+<b>Total Number of Trades : </b>${pumpfunTokens[message.mint].numberOfBuyTrades+pumpfunTokens[message.mint].numberOfSellTrades}
+
+ | <a href="https://photon-sol.tinyastro.io/en/lp/${message.bondingCurveKey}" >Photon</a>
+    `,{
+        parse_mode:"HTML",
+        link_preview_options:{
+            is_disabled:true
+        }
+    });
+}
+
 function websocketConnect(){
     
     const ws=new websocket("wss://pumpportal.fun/api/data");
@@ -223,6 +260,7 @@ function websocketConnect(){
                     pumpfunTokens[message.mint].devSold=now;
                     pumpfunTokens[message.mint].devSoldMarketCapSol=message.marketCapSol;
                     pumpfunTokens[message.mint].devSoldvSolInBondingCurve=message.vSolInBondingCurve;
+                    devSoldAlert(message)
                 }
                 
             }
