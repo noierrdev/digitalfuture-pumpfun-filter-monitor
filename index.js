@@ -204,6 +204,7 @@ function websocketConnect(){
         const currentTime=new Date();
         const now=currentTime.getTime();
         if(message.txType=="create"){
+            // console.log(message)
             pumpfunTokens[message.mint]={
                 ...message,
                 creator:message.traderPublicKey,
@@ -256,11 +257,12 @@ function websocketConnect(){
             if(message.txType=="sell"){
                 // console.log(message)
                 pumpfunTokens[message.mint].numberOfSellTrades+=1;
-                if((pumpfunTokens[message.mint].numberOfBuyTrades>10)&&(message.traderPublicKey==pumpfunTokens[message.mint].creator)&&(!pumpfunTokens[message.mint].devSold)){
+                if((pumpfunTokens[message.mint].numberOfBuyTrades>10)&&(message.traderPublicKey==pumpfunTokens[message.mint].creator)&&(!pumpfunTokens[message.mint].devSold)&&(message.newTokenBalance>0)){
+                    // console.log(message)
                     pumpfunTokens[message.mint].devSold=now;
                     pumpfunTokens[message.mint].devSoldMarketCapSol=message.marketCapSol;
                     pumpfunTokens[message.mint].devSoldvSolInBondingCurve=message.vSolInBondingCurve;
-                    devSoldAlert(message)
+                    // devSoldAlert(message)
                 }
                 
             }
