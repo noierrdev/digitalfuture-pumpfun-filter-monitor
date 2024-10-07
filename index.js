@@ -279,8 +279,8 @@ function websocketConnect(){
                 if((message.newTokenBalance==0)&&(pumpfunTokens[message.mint].numberOfBuyTrades>10)&&(now-pumpfunTokens[message.mint].created>20000)&&(message.traderPublicKey==pumpfunTokens[message.mint].creator)&&(!pumpfunTokens[message.mint].devSold)){
                     // console.log(message)
                     pumpfunTokens[message.mint].devSold=now;
-                    pumpfunTokens[message.mint].devSoldMarketCapSol=message.marketCapSol;
-                    pumpfunTokens[message.mint].devSoldvSolInBondingCurve=message.vSolInBondingCurve;
+                    pumpfunTokens[message.mint].devSoldMarketCapSol=pumpfunTokens[message.mint].prevMarketCapSol;
+                    pumpfunTokens[message.mint].devSoldvSolInBondingCurve=pumpfunTokens[message.mint].prevVSolInBondingCurve;
                     // devSoldAlert(message)
                 }
                 
