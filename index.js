@@ -263,7 +263,8 @@ function websocketConnect(){
                 if(pumpfunTokens[message.mint]&&(!pumpfunTokens[message.mint].alerted)&&((pumpfunTokens[message.mint].devSold))&&message.marketCapSol>=pumpfunTokens[message.mint].devSoldMarketCapSol){
                     pumpfunTokens[message.mint].alerted=now;
                     pumpfunTokens[message.mint].alertedMarketCapSol=message.marketCapSol;
-                    await swapPumpfun(message.mint,pumpfunTokens[message.mint].bondingCurveKey,pumpfunTokens[message.mint].bondingCurveKeyVault,0.01,true);
+                    // await swapPumpfun(message.mint,pumpfunTokens[message.mint].bondingCurveKey,pumpfunTokens[message.mint].bondingCurveKeyVault,0.01,true);
+                    await pumpfunSwapTransaction(message.mint, 0.001,true);
                     filterAlert(message)
                 }
                 if((pumpfunTokens[message.mint].alerted)&&(now-pumpfunTokens[message.mint].created>=15000)&&(message.marketCapSol>=pumpfunTokens[message.mint].alertedMarketCapSol)&&(message.traderPublicKey!=wallet.publicKey.toBase58())){
