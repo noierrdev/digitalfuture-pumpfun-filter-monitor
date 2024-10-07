@@ -8,9 +8,10 @@ const path=require("path");
 const express=require('express');
 const http=require('http')
 const {Bot,Context,session}=require("grammy");
-const { pumpfunSwapTransaction, swapTokenRapid } = require("./swap");
+const { pumpfunSwapTransaction, swapTokenRapid, swapPumpfun } = require("./swap");
 const bs58=require("bs58");
 const {  LIQUIDITY_STATE_LAYOUT_V4, Liquidity,MARKET_STATE_LAYOUT_V3,Market,poolKeys2JsonInfo, ApiPoolInfoV4, SPL_MINT_LAYOUT} = require('@raydium-io/raydium-sdk');
+const { getAssociatedTokenAddressSync } = require("@solana/spl-token");
 
 const FULL_BONDINGCURVE_MARKET_CAP=60000;
 const PUMPFUN_RAYDIUM_MIGRATION="39azUYFWPz3VHgKCf3VChUwbpURdCHRxjWVowf5jUJjg"
@@ -195,7 +196,7 @@ function websocketConnect(){
             websocketConnect()
         }, 2000);
     })
-    ws.on("message",(data)=>{
+    ws.on("message",async (data)=>{
         const message=JSON.parse(data)
         if(!message.txType) {
             console.log(message);
@@ -204,7 +205,8 @@ function websocketConnect(){
         const currentTime=new Date();
         const now=currentTime.getTime();
         if(message.txType=="create"){
-            // console.log(message)
+            console.log(message)
+            const bondingCurveKeyVault=getAssociatedTokenAddressSync(new PublicKey(message.mint),new PublicKey(message.bondingCurveKey),true).toBase58();
             pumpfunTokens[message.mint]={
                 ...message,
                 creator:message.traderPublicKey,
@@ -230,7 +232,8 @@ function websocketConnect(){
                 percent_80:null,
                 percent_90:null,
                 percent_95:null,
-                alerted:null
+                alerted:null,
+                bondingCurveKeyVault
                 // maxBoughtAmount:message.vSolInBondingCurve-30,
                 // maxBoughtAddress:message.traderPublicKey
             }
@@ -242,13 +245,23 @@ function websocketConnect(){
                 keys: [message.mint]
             }
             ws.send(JSON.stringify(payload))
+            
+            // console.log(bondingCurveKeyVault)
         }else {
             if(!pumpfunTokens[message.mint]) return;
             if(message.txType=="buy"){
                 if(pumpfunTokens[message.mint]&&message.marketCapSol>=pumpfunTokens[message.mint].maxPoint){
                     pumpfunTokens[message.mint].maxPoint=message.marketCapSol;
-                    if((pumpfunTokens[message.mint].devSold)&&((now-pumpfunTokens[message.mint].devSold)>10000)&&(!pumpfunTokens[message.mint].alerted)){
+                    // if((pumpfunTokens[message.mint].devSold)&&((now-pumpfunTokens[message.mint].devSold)>10000)&&(!pumpfunTokens[message.mint].alerted)){
+                    //     pumpfunTokens[message.mint].alerted=now;
+                    //     filterAlert(message)
+                    // }
+                }
+                if(pumpfunTokens[message.mint]&&((pumpfunTokens[message.mint].devSold))&&message.marketCapSol>=pumpfunTokens[message.mint].devSoldMarketCapSol){
+                    // pumpfunTokens[message.mint].maxPoint=message.marketCapSol;
+                    if((!pumpfunTokens[message.mint].alerted)){
                         pumpfunTokens[message.mint].alerted=now;
+                        await swapPumpfun(message.mint,pumpfunTokens[message.mint].bondingCurveKey,pumpfunTokens[message.mint].bondingCurveKeyVault,0.006,true);
                         filterAlert(message)
                     }
                 }
@@ -257,12 +270,12 @@ function websocketConnect(){
             if(message.txType=="sell"){
                 // console.log(message)
                 pumpfunTokens[message.mint].numberOfSellTrades+=1;
-                if((pumpfunTokens[message.mint].numberOfBuyTrades>10)&&(message.traderPublicKey==pumpfunTokens[message.mint].creator)&&(!pumpfunTokens[message.mint].devSold)&&(message.newTokenBalance>0)){
+                if((message.newTokenBalance==0)&&(pumpfunTokens[message.mint].numberOfBuyTrades>10)&&(message.traderPublicKey==pumpfunTokens[message.mint].creator)&&(!pumpfunTokens[message.mint].devSold)){
                     // console.log(message)
                     pumpfunTokens[message.mint].devSold=now;
                     pumpfunTokens[message.mint].devSoldMarketCapSol=message.marketCapSol;
                     pumpfunTokens[message.mint].devSoldvSolInBondingCurve=message.vSolInBondingCurve;
-                    devSoldAlert(message)
+                    // devSoldAlert(message)
                 }
                 
             }
@@ -313,7 +326,7 @@ function websocketConnect(){
             const currentTime=new Date();
             const now=currentTime.getTime()
             const updated=pumpfunTokens[token].updated;
-            if((now-updated)>(20*60000)){
+            if(((now-updated)>(20*60000))&&(!pumpfunTokens[token].alerted)){
                 delete pumpfunTokens[token];
                 // fs.unlinkSync(path.resolve(__dirname,"logs",token))
                 payload={
