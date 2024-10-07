@@ -266,7 +266,7 @@ function websocketConnect(){
                     await swapPumpfun(message.mint,pumpfunTokens[message.mint].bondingCurveKey,pumpfunTokens[message.mint].bondingCurveKeyVault,0.0001,true);
                     filterAlert(message)
                 }
-                if((pumpfunTokens[message.mint].alerted)&&(message.marketCapSol>=pumpfunTokens[message.mint].alertedMarketCapSol)&&(message.traderPublicKey!=wallet.publicKey.toBase58())){
+                if((pumpfunTokens[message.mint].alerted)&&(now-pumpfunTokens[message.mint].created>=12000)&&(message.marketCapSol>=pumpfunTokens[message.mint].alertedMarketCapSol)&&(message.traderPublicKey!=wallet.publicKey.toBase58())){
                     await pumpfunSwapTransaction(message.mint, 0.001,false);
                 }
                 pumpfunTokens[message.mint].numberOfBuyTrades+=1;
