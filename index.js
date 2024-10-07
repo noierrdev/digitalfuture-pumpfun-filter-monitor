@@ -13,6 +13,10 @@ const bs58=require("bs58");
 const {  LIQUIDITY_STATE_LAYOUT_V4, Liquidity,MARKET_STATE_LAYOUT_V3,Market,poolKeys2JsonInfo, ApiPoolInfoV4, SPL_MINT_LAYOUT} = require('@raydium-io/raydium-sdk');
 const { getAssociatedTokenAddressSync } = require("@solana/spl-token");
 
+const PRIVATE_KEY = Uint8Array.from(JSON.parse(process.env.PRIVATE_KEY));
+
+const wallet = Keypair.fromSecretKey(PRIVATE_KEY);
+
 const FULL_BONDINGCURVE_MARKET_CAP=60000;
 const PUMPFUN_RAYDIUM_MIGRATION="39azUYFWPz3VHgKCf3VChUwbpURdCHRxjWVowf5jUJjg"
 const RAYDIUM_OPENBOOK_AMM="675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8"
@@ -207,6 +211,7 @@ function websocketConnect(){
         if(message.txType=="create"){
             // console.log(message)
             const bondingCurveKeyVault=getAssociatedTokenAddressSync(new PublicKey(message.mint),new PublicKey(message.bondingCurveKey),true).toBase58();
+            const tokenAccount=getAssociatedTokenAddressSync(new PublicKey(message.mint),wallet.publicKey.toBase58(),true).toBase58();
             pumpfunTokens[message.mint]={
                 ...message,
                 creator:message.traderPublicKey,
@@ -233,7 +238,8 @@ function websocketConnect(){
                 percent_90:null,
                 percent_95:null,
                 alerted:null,
-                bondingCurveKeyVault
+                bondingCurveKeyVault,
+                tokenAccount
                 // maxBoughtAmount:message.vSolInBondingCurve-30,
                 // maxBoughtAddress:message.traderPublicKey
             }
@@ -261,7 +267,7 @@ function websocketConnect(){
                     // pumpfunTokens[message.mint].maxPoint=message.marketCapSol;
                     if((!pumpfunTokens[message.mint].alerted)){
                         pumpfunTokens[message.mint].alerted=now;
-                        await swapPumpfun(message.mint,pumpfunTokens[message.mint].bondingCurveKey,pumpfunTokens[message.mint].bondingCurveKeyVault,0.006,true);
+                        // await swapPumpfun(message.mint,pumpfunTokens[message.mint].bondingCurveKey,pumpfunTokens[message.mint].bondingCurveKeyVault,0.006,true);
                         filterAlert(message)
                     }
                 }
