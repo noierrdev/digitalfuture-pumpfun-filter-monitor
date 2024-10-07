@@ -211,7 +211,7 @@ function websocketConnect(){
         if(message.txType=="create"){
             // console.log(message)
             const bondingCurveKeyVault=getAssociatedTokenAddressSync(new PublicKey(message.mint),new PublicKey(message.bondingCurveKey),true).toBase58();
-            const tokenAccount=getAssociatedTokenAddressSync(new PublicKey(message.mint),wallet.publicKey.toBase58(),true).toBase58();
+            const tokenAccount=getAssociatedTokenAddressSync(new PublicKey(message.mint),wallet.publicKey,true).toBase58();
             pumpfunTokens[message.mint]={
                 ...message,
                 creator:message.traderPublicKey,
