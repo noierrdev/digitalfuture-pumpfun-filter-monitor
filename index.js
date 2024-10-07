@@ -205,7 +205,7 @@ function websocketConnect(){
         const currentTime=new Date();
         const now=currentTime.getTime();
         if(message.txType=="create"){
-            console.log(message)
+            // console.log(message)
             const bondingCurveKeyVault=getAssociatedTokenAddressSync(new PublicKey(message.mint),new PublicKey(message.bondingCurveKey),true).toBase58();
             pumpfunTokens[message.mint]={
                 ...message,
