@@ -238,8 +238,9 @@ function websocketConnect(){
                 percent_90:null,
                 percent_95:null,
                 alerted:null,
+                alertedMarketCapSol:0,
                 bondingCurveKeyVault,
-                tokenAccount
+                tokenAccount,
                 // maxBoughtAmount:message.vSolInBondingCurve-30,
                 // maxBoughtAddress:message.traderPublicKey
             }
@@ -258,18 +259,15 @@ function websocketConnect(){
             if(message.txType=="buy"){
                 if(pumpfunTokens[message.mint]&&message.marketCapSol>=pumpfunTokens[message.mint].maxPoint){
                     pumpfunTokens[message.mint].maxPoint=message.marketCapSol;
-                    // if((pumpfunTokens[message.mint].devSold)&&((now-pumpfunTokens[message.mint].devSold)>10000)&&(!pumpfunTokens[message.mint].alerted)){
-                    //     pumpfunTokens[message.mint].alerted=now;
-                    //     filterAlert(message)
-                    // }
                 }
-                if(pumpfunTokens[message.mint]&&((pumpfunTokens[message.mint].devSold))&&message.marketCapSol>=pumpfunTokens[message.mint].devSoldMarketCapSol){
-                    // pumpfunTokens[message.mint].maxPoint=message.marketCapSol;
-                    if((!pumpfunTokens[message.mint].alerted)){
-                        pumpfunTokens[message.mint].alerted=now;
-                        // await swapPumpfun(message.mint,pumpfunTokens[message.mint].bondingCurveKey,pumpfunTokens[message.mint].bondingCurveKeyVault,0.006,true);
-                        filterAlert(message)
-                    }
+                if(pumpfunTokens[message.mint]&&(!pumpfunTokens[message.mint].alerted)&&((pumpfunTokens[message.mint].devSold))&&message.marketCapSol>=pumpfunTokens[message.mint].devSoldMarketCapSol){
+                    pumpfunTokens[message.mint].alerted=now;
+                    pumpfunTokens[message.mint].alertedMarketCapSol=message.marketCapSol;
+                    // await swapPumpfun(message.mint,pumpfunTokens[message.mint].bondingCurveKey,pumpfunTokens[message.mint].bondingCurveKeyVault,0.006,true);
+                    filterAlert(message)
+                }
+                if((pumpfunTokens[message.mint].alerted)&&(message.marketCapSol>=pumpfunTokens[message.mint].alertedMarketCapSol)&&(message.traderPublicKey!=wallet.publicKey.toBase58())){
+                    await pumpfunSwapTransaction(message.mint, 0.001,false);
                 }
                 pumpfunTokens[message.mint].numberOfBuyTrades+=1;
             }
