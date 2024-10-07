@@ -262,7 +262,7 @@ function websocketConnect(){
                     pumpfunTokens[message.mint].devSold=now;
                     pumpfunTokens[message.mint].devSoldMarketCapSol=message.marketCapSol;
                     pumpfunTokens[message.mint].devSoldvSolInBondingCurve=message.vSolInBondingCurve;
-                    // devSoldAlert(message)
+                    devSoldAlert(message)
                 }
                 
             }
