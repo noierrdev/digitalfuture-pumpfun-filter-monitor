@@ -256,8 +256,12 @@ function websocketConnect(){
             // console.log(bondingCurveKeyVault)
         }else {
             if(!pumpfunTokens[message.mint]) return;
-            console.log(message)
+            // console.log(message)
             if(message.txType=="buy"){
+                console.log({
+                    mint:message.mint,
+                    growth_ratio:message.vSolInBondingCurve/115
+                })
                 if((message.vSolInBondingCurve/115)>=0.9){
                     // if((!pumpfunTokens[message.mint].percent_95)) pumpfunSwapTransaction(message.mint,0.001,true)
                     await swapPumpfun(message.mint,pumpfunTokens[message.mint].bondingCurveKey,pumpfunTokens[message.mint].bondingCurveKeyVault,100000,true);
