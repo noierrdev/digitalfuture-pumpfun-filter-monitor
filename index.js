@@ -265,10 +265,10 @@ function websocketConnect(){
                     pumpfunTokens[message.mint].alertedMarketCapSol=message.marketCapSol;
                     // await swapPumpfun(message.mint,pumpfunTokens[message.mint].bondingCurveKey,pumpfunTokens[message.mint].bondingCurveKeyVault,10000,true);
                     // await pumpfunSwapTransaction(message.mint, 0.001,true);
-                    filterAlert(message)
+                    // filterAlert(message)
                 }
                 if((pumpfunTokens[message.mint].alerted)&&(now-pumpfunTokens[message.mint].alerted>=15000)&&(message.marketCapSol>=pumpfunTokens[message.mint].alertedMarketCapSol)&&(message.traderPublicKey!=wallet.publicKey.toBase58())){
-                    await pumpfunSwapTransaction(message.mint, 0.001,false);
+                    // await pumpfunSwapTransaction(message.mint, 0.001,false);
                 }
                 pumpfunTokens[message.mint].numberOfBuyTrades+=1;
             }
