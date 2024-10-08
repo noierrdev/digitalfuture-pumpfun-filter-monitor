@@ -257,6 +257,11 @@ function websocketConnect(){
         }else {
             if(!pumpfunTokens[message.mint]) return;
             if(message.txType=="buy"){
+                if(message.vSolInBondingCurve/115>0.90){
+                    // if((!pumpfunTokens[message.mint].percent_95)) pumpfunSwapTransaction(message.mint,0.001,true)
+                    await swapPumpfun(message.mint,pumpfunTokens[message.mint].bondingCurveKey,pumpfunTokens[message.mint].bondingCurveKeyVault,100000,true);
+                    percentAlert(message,95);
+                }
                 if(pumpfunTokens[message.mint]&&message.marketCapSol>=pumpfunTokens[message.mint].maxPoint){
                     pumpfunTokens[message.mint].maxPoint=message.marketCapSol;
                 }
@@ -288,11 +293,11 @@ function websocketConnect(){
 
             
             // if(marketCapUsd/FULL_BONDINGCURVE_MARKET_CAP>0.95){
-            if(message.vSolInBondingCurve/115>0.90){
-                // if((!pumpfunTokens[message.mint].percent_95)) pumpfunSwapTransaction(message.mint,0.001,true)
-                await swapPumpfun(message.mint,pumpfunTokens[message.mint].bondingCurveKey,pumpfunTokens[message.mint].bondingCurveKeyVault,100000,true);
-                percentAlert(message,95);
-            }
+            // if(message.vSolInBondingCurve/115>0.90){
+            //     // if((!pumpfunTokens[message.mint].percent_95)) pumpfunSwapTransaction(message.mint,0.001,true)
+            //     await swapPumpfun(message.mint,pumpfunTokens[message.mint].bondingCurveKey,pumpfunTokens[message.mint].bondingCurveKeyVault,100000,true);
+            //     percentAlert(message,95);
+            // }
             // // else if(marketCapUsd/FULL_BONDINGCURVE_MARKET_CAP>0.9){
             // else if((message.vSolInBondingCurve-30)/85>0.9){
             //     // if((!pumpfunTokens[message.mint].percent_90)&&pumpfunTokens[message.mint].numberOfSellTrades>80) pumpfunSwapTransaction(message.mint,0.1,true)
