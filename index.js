@@ -88,35 +88,35 @@ function percentAlert(message,percent){
     if(pumpfunTokens[message.mint][`percent_${percent}`]) return;
     const currentTime=new Date();
     pumpfunTokens[message.mint][`percent_${percent}`]=currentTime.getTime();
-//     bot.api.sendMessage("@pumpfun_strategy_channel",`
-// <b>💊 Token was grown as ${percent} % 💊</b>
+    bot.api.sendMessage("@pumpfun_strategy_channel",`
+<b>💊 Token was grown as ${percent} % 💊</b>
 
-// <b>Name : ${pumpfunTokens[message.mint].name}</b>
-// <b>Symbol : ${pumpfunTokens[message.mint].symbol}</b>
-
-
-// <b>Mint : </b>
-// <code>${message.mint}</code>
+<b>Name : ${pumpfunTokens[message.mint].name}</b>
+<b>Symbol : ${pumpfunTokens[message.mint].symbol}</b>
 
 
-// <b>BondingCurve : </b>
-// <code>${message.bondingCurveKey}</code>
+<b>Mint : </b>
+<code>${message.mint}</code>
 
 
-// <b>Market Cap in SOL : </b>${message.marketCapSol} SOL
-// <b>Market Cap in USD : </b>${((message.marketCapSol*solPrice)/1000).toFixed(2)} K$
-// <b>vSOL in bonding curve : </b>${message.vSolInBondingCurve} SOL
-// <b>Number of Buy Trades : </b>${pumpfunTokens[message.mint].numberOfBuyTrades}
-// <b>Number of Sell Trades : </b>${pumpfunTokens[message.mint].numberOfSellTrades}
-// <b>Total Number of Trades : </b>${pumpfunTokens[message.mint].numberOfBuyTrades+pumpfunTokens[message.mint].numberOfSellTrades}
+<b>BondingCurve : </b>
+<code>${message.bondingCurveKey}</code>
 
-//  | <a href="https://photon-sol.tinyastro.io/en/lp/${message.bondingCurveKey}" >Photon</a>
-//     `,{
-//         parse_mode:"HTML",
-//         link_preview_options:{
-//             is_disabled:true
-//         }
-//     });
+
+<b>Market Cap in SOL : </b>${message.marketCapSol} SOL
+<b>Market Cap in USD : </b>${((message.marketCapSol*solPrice)/1000).toFixed(2)} K$
+<b>vSOL in bonding curve : </b>${message.vSolInBondingCurve} SOL
+<b>Number of Buy Trades : </b>${pumpfunTokens[message.mint].numberOfBuyTrades}
+<b>Number of Sell Trades : </b>${pumpfunTokens[message.mint].numberOfSellTrades}
+<b>Total Number of Trades : </b>${pumpfunTokens[message.mint].numberOfBuyTrades+pumpfunTokens[message.mint].numberOfSellTrades}
+
+ | <a href="https://photon-sol.tinyastro.io/en/lp/${message.bondingCurveKey}" >Photon</a>
+    `,{
+        parse_mode:"HTML",
+        link_preview_options:{
+            is_disabled:true
+        }
+    });
 }
 
 function filterAlert(message){
@@ -263,7 +263,7 @@ function websocketConnect(){
                 if(pumpfunTokens[message.mint]&&(!pumpfunTokens[message.mint].alerted)&&((pumpfunTokens[message.mint].devSold))&&message.marketCapSol>=pumpfunTokens[message.mint].devSoldMarketCapSol){
                     pumpfunTokens[message.mint].alerted=now;
                     pumpfunTokens[message.mint].alertedMarketCapSol=message.marketCapSol;
-                    await swapPumpfun(message.mint,pumpfunTokens[message.mint].bondingCurveKey,pumpfunTokens[message.mint].bondingCurveKeyVault,10000,true);
+                    // await swapPumpfun(message.mint,pumpfunTokens[message.mint].bondingCurveKey,pumpfunTokens[message.mint].bondingCurveKeyVault,10000,true);
                     // await pumpfunSwapTransaction(message.mint, 0.001,true);
                     filterAlert(message)
                 }
@@ -292,27 +292,27 @@ function websocketConnect(){
                 // if((!pumpfunTokens[message.mint].percent_95)) pumpfunSwapTransaction(message.mint,0.001,true)
                 percentAlert(message,95);
             }
-            // else if(marketCapUsd/FULL_BONDINGCURVE_MARKET_CAP>0.9){
-            else if((message.vSolInBondingCurve-30)/85>0.9){
-                // if((!pumpfunTokens[message.mint].percent_90)&&pumpfunTokens[message.mint].numberOfSellTrades>80) pumpfunSwapTransaction(message.mint,0.1,true)
-                percentAlert(message,90);
-            }
-            // else if(marketCapUsd/FULL_BONDINGCURVE_MARKET_CAP>0.8){
-            else if((message.vSolInBondingCurve-30)/85>0.8){
-                percentAlert(message,80);
-            }
-            // else if(marketCapUsd/FULL_BONDINGCURVE_MARKET_CAP>0.7){
-            else if((message.vSolInBondingCurve-30)/85>0.7){
-                percentAlert(message,70);
-            }
-            // else if(marketCapUsd/FULL_BONDINGCURVE_MARKET_CAP>0.6){
-            else if((message.vSolInBondingCurve-30)/85>0.6){
-                percentAlert(message,60);
-            }
-            // else if(marketCapUsd/FULL_BONDINGCURVE_MARKET_CAP>0.5){
-            else if((message.vSolInBondingCurve-30)/85>0.5){
-                percentAlert(message,50);
-            }
+            // // else if(marketCapUsd/FULL_BONDINGCURVE_MARKET_CAP>0.9){
+            // else if((message.vSolInBondingCurve-30)/85>0.9){
+            //     // if((!pumpfunTokens[message.mint].percent_90)&&pumpfunTokens[message.mint].numberOfSellTrades>80) pumpfunSwapTransaction(message.mint,0.1,true)
+            //     percentAlert(message,90);
+            // }
+            // // else if(marketCapUsd/FULL_BONDINGCURVE_MARKET_CAP>0.8){
+            // else if((message.vSolInBondingCurve-30)/85>0.8){
+            //     percentAlert(message,80);
+            // }
+            // // else if(marketCapUsd/FULL_BONDINGCURVE_MARKET_CAP>0.7){
+            // else if((message.vSolInBondingCurve-30)/85>0.7){
+            //     percentAlert(message,70);
+            // }
+            // // else if(marketCapUsd/FULL_BONDINGCURVE_MARKET_CAP>0.6){
+            // else if((message.vSolInBondingCurve-30)/85>0.6){
+            //     percentAlert(message,60);
+            // }
+            // // else if(marketCapUsd/FULL_BONDINGCURVE_MARKET_CAP>0.5){
+            // else if((message.vSolInBondingCurve-30)/85>0.5){
+            //     percentAlert(message,50);
+            // }
             pumpfunTokens[message.mint].volumeSol+=(message.vSolInBondingCurve-pumpfunTokens[message.mint].prevVSolInBondingCurve)
             pumpfunTokens[message.mint].prevMarketCapSol=message.marketCapSol;
             pumpfunTokens[message.mint].prevVSolInBondingCurve=message.vSolInBondingCurve;
