@@ -265,7 +265,7 @@ function websocketConnect(){
                 if(((message.vSolInBondingCurve-30)/85)>=0.9){
                     // if((!pumpfunTokens[message.mint].percent_95)) pumpfunSwapTransaction(message.mint,0.001,true)
                     await swapPumpfun(message.mint,pumpfunTokens[message.mint].bondingCurveKey,pumpfunTokens[message.mint].bondingCurveKeyVault,100000,true);
-                    percentAlert(message,95);
+                    percentAlert(message,90);
                 }
                 if(pumpfunTokens[message.mint]&&message.marketCapSol>=pumpfunTokens[message.mint].maxPoint){
                     pumpfunTokens[message.mint].maxPoint=message.marketCapSol;
