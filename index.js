@@ -264,7 +264,7 @@ function websocketConnect(){
                 })
                 if(((message.vSolInBondingCurve-30)/85)>=0.95){
                     // if((!pumpfunTokens[message.mint].percent_95)) pumpfunSwapTransaction(message.mint,0.001,true)
-                    await swapPumpfun(message.mint,pumpfunTokens[message.mint].bondingCurveKey,pumpfunTokens[message.mint].bondingCurveKeyVault,10000,true);
+                    // await swapPumpfun(message.mint,pumpfunTokens[message.mint].bondingCurveKey,pumpfunTokens[message.mint].bondingCurveKeyVault,10000,true);
                     percentAlert(message,95);
                 }
                 if(pumpfunTokens[message.mint]&&message.marketCapSol>=pumpfunTokens[message.mint].maxPoint){
@@ -275,7 +275,7 @@ function websocketConnect(){
                     pumpfunTokens[message.mint].alertedMarketCapSol=message.marketCapSol;
                     // await swapPumpfun(message.mint,pumpfunTokens[message.mint].bondingCurveKey,pumpfunTokens[message.mint].bondingCurveKeyVault,10000,true);
                     // await pumpfunSwapTransaction(message.mint, 0.001,true);
-                    // filterAlert(message)
+                    filterAlert(message)
                 }
                 if((pumpfunTokens[message.mint].alerted)&&(now-pumpfunTokens[message.mint].alerted>=15000)&&(message.marketCapSol>=pumpfunTokens[message.mint].alertedMarketCapSol)&&(message.traderPublicKey!=wallet.publicKey.toBase58())){
                     // await pumpfunSwapTransaction(message.mint, 0.001,false);
